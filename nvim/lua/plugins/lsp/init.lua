@@ -8,7 +8,7 @@ return {
 		},
 
 		dependencies = {
-			"mason.nvim",
+			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 		},
 
@@ -42,9 +42,9 @@ return {
 			require("mason-lspconfig").setup({ ensure_installed = { "lua_ls", "clangd" } })
 			require 'lspconfig'.clangd.setup {
 				capabilities = capabilities,
-				cmd = { "/usr/bin/clangd" },
+				--cmd = { "clang-17" },
 				filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-				root_dir = require'lspconfig'.util.root_pattern(
+				root_dir = require 'lspconfig'.util.root_pattern(
 					'.clangd'
 					, '.clang-tidy'
 					, '.clang-format'
@@ -68,6 +68,10 @@ return {
 			}
 		end,
 
-		keys = { { "<leader>lf", "<cmd>lua vim.lsp.buf.format()<cr>", desc = "Format" } }
+		keys = {
+			{ "<leader>lf",     "<cmd>lua vim.lsp.buf.format()<cr>",             desc = "Format" },
+			{ "<leader>lo",     "<cmd>ClangdSwitchSourceHeader<cr>",             desc = "Switch between header and source" },
+			{ "<leader>l<S-o>", "<C-w>v<C-w>l<cmd>ClangdSwitchSourceHeader<cr>", desc = "Open header/source in vsplit." }
+		}
 	}
 }

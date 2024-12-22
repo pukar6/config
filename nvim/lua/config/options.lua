@@ -13,3 +13,5 @@ opt.tabstop = 2
 opt.smartcase = true
 opt.smartindent = true
 opt.smoothscroll = true
+
+vim.api.nvim_set_option("clipboard", "unnamed")

@@ -38,6 +38,11 @@ return {
 		},
 	},
 
+	keys = {
+		{"<c-j>", function() require("luasnip").jump(1) end, desc = "Jump forward"},
+		{"<c-k>", function() require("luasnip").jump(-1) end, desc = "Jump backward"}
+	},
+
 	config = function()
 		local has_words_before = function()
 			unpack = unpack or table.unpack
@@ -46,6 +51,7 @@ return {
 		end
 
 		local cmp = require("cmp");
+		local luasnip = require("luasnip")
 
 		cmp.setup({
 			snippet = {
@@ -66,21 +72,35 @@ return {
 			}),
 
 			mapping = {
-				['<Tab>'] = cmp.mapping(function(fallback)
+				['<CR>'] = cmp.mapping(function(fallback)
 					if cmp.visible() then
-						if #cmp.get_entries() == 1 then
-							cmp.confirm({ select = true })
+						if luasnip.expandable() then
+							luasnip.expand()
 						else
-							cmp.select_next_item()
+							cmp.confirm({
+								select = true,
+							})
 						end
-						--[[ Replace with your snippet engine (see above sections on this page)
-      elseif snippy.can_expand_or_advance() then
-        snippy.expand_or_advance() ]]
-					elseif has_words_before() then
-						cmp.complete()
-						if #cmp.get_entries() == 1 then
-							cmp.confirm({ select = true })
-						end
+					else
+						fallback()
+					end
+				end),
+
+				["<Tab>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						cmp.select_next_item()
+					elseif luasnip.locally_jumpable(1) then
+						luasnip.jump(1)
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
+
+				["<S-Tab>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						cmp.select_prev_item()
+					elseif luasnip.locally_jumpable(-1) then
+						luasnip.jump(-1)
 					else
 						fallback()
 					end
